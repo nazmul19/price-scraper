@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Price Scraper</title>
+
+    <style>
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            max-width: 800px;
+
+            margin: 0 auto;
+
+            padding: 20px;
+
+        }
+
+        .form-container {
+
+            background-color: #f5f5f5;
+
+            padding: 20px;
+
+            border-radius: 8px;
+
+            margin-top: 20px;
+
+        }
+
+        .form-group {
+
+            margin-bottom: 15px;
+
+        }
+
+        input[type="url"] {
+
+            width: 100%;
+
+            padding: 8px;
+
+            margin: 5px 0;
+
+            border: 1px solid #ddd;
+
+            border-radius: 4px;
+
+            box-sizing: border-box;
+
+        }
+
+        button {
+
+            background-color: #4CAF50;
+
+            color: white;
+
+            padding: 10px 15px;
+
+            border: none;
+
+            border-radius: 4px;
+
+            cursor: pointer;
+
+        }
+
+        button:hover {
+
+            background-color: #45a049;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Product Price Scraper</h1>
+
+    <div class="form-container">
+
+        <form id="scrapeForm">
+
+            <div class="form-group">
+
+                <label for="url">Product URL:</label>
+
+                <input type="url" id="url" name="url" required 
+                    placeholder="https://www.amazon.in/dp/B08N5L5L84">
+
+            </div>
+
+            <div class="form-group">
+
+                <button type="submit">Get Price</button>
+
+            </div>
+
+        </form>
+
+        <div id="result"></div>
+
+    </div>
+
+
+
+    <script>
+
+        document.getElementById('scrapeForm').addEventListener('submit', async (e) => {
+
+            e.preventDefault();
+
+            const url = document.getElementById('url').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            try {
+
+                const response = await fetch(`/product-price?url=${encodeURIComponent(url)}`);
+
+                if (!response.ok) {
+
+                    throw new Error(`HTTP error! status: ${response.status}`);
+
+                }
+
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+
+                    <div style="margin-top: 20px;">
+
+                        <h3>Results:</h3>
+                        <p><strong>Price:</strong> ${data.price.price}</p>
+                        <p><strong>MRP Price:</strong> ${data.price.mrp_price}</p>
+                        <p><strong>Discount Percentage:</strong> ${data.price.discount_percentage}</p>
+
+                    </div>`;
+
+            } catch (error) {
+
+                resultDiv.innerHTML = `
+
+                    <p style="color: red; margin-top: 20px;">
+
+                        Error: ${error.message}
+
+                    </p>`;
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html> 
